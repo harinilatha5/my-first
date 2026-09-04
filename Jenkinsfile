@@ -26,6 +26,15 @@ pipeline {
             }
         }
 
+        stage('Deploy') {
+            steps {
+                sh '''
+                    pkill -f my-first.jar || true
+                    nohup java -jar target/my-first.jar > /var/lib/jenkins/app-output.log 2>&1 &
+                '''
+            }
+        }
+
         stage('Archive Artifact') {
             steps {
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
@@ -35,7 +44,7 @@ pipeline {
 
     post {
         success {
-            echo 'Build Successful! Student Management System packaged.'
+            echo 'Build Successful! Student Management System packaged and deployed.'
         }
         failure {
             echo 'Build Failed! Check the console output above.'
